@@ -10,9 +10,8 @@ const userLogin = async (req, res) => {
       .json({ message: "please make sure email and password are not empty." });
   }
 
-  const userPassword = await bcrypt.hash(process.env.USER_PASSWORD, 10);
-  console.log(userPassword);
   const userEmail = process.env.USER_EMAIL;
+  const userPassword = process.env.USER_PASSWORD;
 
   if (email === userEmail) {
     const match = await bcrypt.compare(password, userPassword);
