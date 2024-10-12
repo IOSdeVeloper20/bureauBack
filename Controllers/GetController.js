@@ -1,27 +1,44 @@
-const fs = require("fs");
-const path = require("path");
+const mainSchema = require("../Models/mainData");
+const aboutSchema = require("../Models/aboutData");
+const inspectionsSchema = require("../Models/inspectionsData");
+const trainingSchema = require("../Models/trainingData");
 
-const textFiles = {
-  mainData: path.join(__dirname, "../DataFiles/MainText.json"),
-  aboutData: path.join(__dirname, "../DataFiles/AboutText.json"),
-  inspectionsData: path.join(__dirname, "../DataFiles/InspectionsText.json"),
-  trainingData: path.join(__dirname, "../DataFiles/TrainingText.json"),
-};
-
-const getData = (req, res) => {
+const getData = async (req, res) => {
   const fileKey = req.params.file;
-  const dataPath = textFiles[fileKey];
+  let query = {};
+  let schemaName;
 
-  if (!dataPath) {
-    return res.status(404).json({ message: "File not found" });
+  switch (fileKey) {
+    case "mainData":
+      schemaName = mainSchema;
+      break;
+    case "aboutData":
+      schemaName = aboutSchema;
+      break;
+    case "inspectionsData":
+      schemaName = inspectionsSchema;
+      break;
+    case "trainingData":
+      schemaName = trainingSchema;
+      break;
+
+    default:
+      return res.status(404).json({ message: "File not found!" });
   }
 
-  fs.readFile(dataPath, "utf-8", (err, data) => {
-    if (err) {
-      return res.status(500).json({ message: "Error reading file" });
+  try {
+    const data = await schemaName.find(query);
+
+    if (!data) {
+      return res.status(404).json({ message: "Data not found!" });
     }
-    res.json(JSON.parse(data));
-  });
+
+    res.json(data);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error getting data from Database!" });
+  }
 };
 
 module.exports = { getData };

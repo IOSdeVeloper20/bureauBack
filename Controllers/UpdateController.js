@@ -1,38 +1,38 @@
-const fs = require("fs");
-const path = require("path");
+const mainSchema = require("../Models/mainData");
+const aboutSchema = require("../Models/aboutData");
+const inspectionsSchema = require("../Models/inspectionsData");
+const trainingSchema = require("../Models/trainingData");
 
-const textFiles = {
-  mainData: path.join(__dirname, "../DataFiles/MainText.json"),
-  aboutData: path.join(__dirname, "../DataFiles/AboutText.json"),
-  inspectionsData: path.join(__dirname, "../DataFiles/InspectionsText.json"),
-  trainingData: path.join(__dirname, "../DataFiles/TrainingText.json"),
+const models = {
+  mainData: mainSchema,
+  aboutData: aboutSchema,
+  inspectionsData: inspectionsSchema,
+  trainingData: trainingSchema,
 };
 
-const UpdateText = (req, res) => {
-  const textID = req.params.id;
-  const fileKey = req.params.file;
-  const newText = req.body.text;
-  const dataPath = textFiles[fileKey];
+const UpdateText = async (req, res) => {
+  const { id, file } = req.params;
+  const { text } = req.body;
+  let schemaName = models[file];
 
-  if (!dataPath) {
-    return res.status(401).json({ message: "File not found" });
+  if (!schemaName) {
+    return res.status(404).json({ message: "Collection not Found!" });
   }
 
-  let jsonData;
   try {
-    jsonData = JSON.parse(fs.readFileSync(dataPath));
+    const element = await schemaName.findOne({id: id});
+    
+    if (!element) {
+      return res.status(404).json({ message: "Element did not update!" });
+    }
+    element.text = text;
+    await element.save();
+    console.log("element:", element);
+
+    return res.status(200).json({ message: "Text updated successfully" });
   } catch (err) {
     return res.status(500).json({ message: "Error reading file" });
   }
-
-  const item = jsonData.find((item) => item.id === textID);
-
-  if (item) {
-    item.text = newText;
-    fs.writeFileSync(dataPath, JSON.stringify(jsonData));
-    return res.status(200).json({ message: "Text Updated Successfully" });
-  }
-  return res.status(401).json({ message: "Item Not Found" });
 };
 
 module.exports = {
