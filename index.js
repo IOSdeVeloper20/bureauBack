@@ -11,12 +11,9 @@ const loginRouter = require("./Routes/LoginRouter");
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGODB_URI, {})
   .then(() => console.log("MongoDB is Connected"))
-  .catch((err) => console.log(err, "There Are an error with connection"));
+  .catch((err) => console.log(err, "There is an error with connection"));
 
 const Port = process.env.PORT || 5001;
 

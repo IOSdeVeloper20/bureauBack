@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 
-const mainSchema = mongoose.Schema(
+const gallerySchema = mongoose.Schema(
   {
     id: { type: String, required: true },
-    orderID: {type: Number, required: true},
     text: { type: String, required: true },
     fileName: {type: String, required: true},
+    orderID: {type: Number, required: true},
     arText: {type: String, required: true},
   },
-  { collection: "mainDatas" }
+  { collection: "galleryData" }
 );
 
-module.exports = mongoose.model("Main", mainSchema);
+module.exports = mongoose.model("Gallery", gallerySchema);
