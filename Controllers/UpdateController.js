@@ -14,7 +14,7 @@ const models = {
   trainingData: trainingSchema,
   approvalsData: approvalsSchema,
   galleryData: gallerySchema,
-  contacusData: contactusSchema,
+  contactusData: contactusSchema,
   footerData: footerSchema,
 };
 
